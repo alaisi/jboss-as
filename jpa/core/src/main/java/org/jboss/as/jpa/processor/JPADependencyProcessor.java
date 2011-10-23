@@ -157,11 +157,6 @@ public class JPADependencyProcessor implements DeploymentUnitProcessor {
                         }
                     }
                 }
-                if (adapterModule != null) {
-                    ROOT_LOGGER.debugf("%s is configured to use adapter module '%s'", pu.getPersistenceUnitName(), adapterModule);
-                    moduleDependencies.add(adapterModule);
-                }
-                deploymentUnit.putAttachment(JpaAttachments.ADAPTOR_CLASS_NAME, adapterClass);
 
                 String provider = pu.getProperties().getProperty(Configuration.PROVIDER_MODULE);
                 if (provider != null) {
@@ -182,8 +177,21 @@ public class JPADependencyProcessor implements DeploymentUnitProcessor {
                     if (providerModuleName != null) {
                         moduleDependencies.add(providerModuleName);
                         ROOT_LOGGER.debugf("%s is configured to use provider module '%s'", pu.getPersistenceUnitName(), providerModuleName);
+
+                        if(adapterModule == null) {
+                            adapterModule = Configuration.getAdaptorModuleNameFromProviderModuleName(providerModuleName);
+                            if(adapterModule != null) {
+                                pu.getProperties().put(Configuration.ADAPTER_MODULE, adapterModule);
+                            }
+                        }
                     }
                 }
+
+                if (adapterModule != null) {
+                    ROOT_LOGGER.debugf("%s is configured to use adapter module '%s'", pu.getPersistenceUnitName(), adapterModule);
+                    moduleDependencies.add(adapterModule);
+                }
+                deploymentUnit.putAttachment(JpaAttachments.ADAPTOR_CLASS_NAME, adapterClass);
             }
         }
         return defaultProviderCount;
