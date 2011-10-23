@@ -51,6 +51,11 @@ public class Configuration {
      */
     public static final String PROVIDER_MODULE_HIBERNATE3 = "org.hibernate:3";
 
+    /**
+     * OpenJPA persistence provider, if this provider is chosen. ADAPTER_MODULE_OPENJPA will be enabled
+     */
+    public static final String PROVIDER_MODULE_OPENJPA = "org.apache.openjpa";
+
     public static final String PROVIDER_MODULE_ECLIPSELINK = "org.eclipse.persistence";
 
     public static final String PROVIDER_MODULE_TOPLINK = "oracle.toplink";
@@ -83,6 +88,12 @@ public class Configuration {
     public static final String PROVIDER_CLASS_ECLIPSELINK = "org.eclipse.persistence.jpa.PersistenceProvider";
 
     /**
+     * OpenJPA provider class name
+     */
+    public static final String PROVIDER_CLASS_OPENJPA = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+
+
+    /**
      * default provider class
      */
     public static final String PROVIDER_CLASS_DEFAULT = PROVIDER_CLASS_HIBERNATE;
@@ -105,6 +116,11 @@ public class Configuration {
     public static final String ADAPTER_MODULE_HIBERNATE3 = "org.jboss.as.jpa.hibernate:3";
 
     /**
+     * OpenJPA persistence provider adaptor
+     */
+    public static final String ADAPTER_MODULE_OPENJPA = "org.jboss.as.jpa.openjpa";
+
+    /**
      * name of the AS module that contains the persistence provider adapter
      */
     public static final String ADAPTER_MODULE = "jboss.as.jpa.adapterModule";
@@ -122,6 +138,10 @@ public class Configuration {
     // key = provider class name, value = module name
     private static final Map<String,String> providerClassToModuleName = new HashMap<String,String>();
 
+    // key = provider module name, value = adaptor module name
+    private static final Map<String,String> providerModuleNameToAdaptorModuleName = new HashMap<String,String>();
+
+
     static {
         // always choose the default hibernate version for the Hibernate provider class mapping
         // if the user wants a different version. they can specify the provider module name
@@ -130,6 +150,10 @@ public class Configuration {
         providerClassToModuleName.put(PROVIDER_CLASS_TOPLINK_ESSENTIALS, PROVIDER_MODULE_TOPLINK);
         providerClassToModuleName.put(PROVIDER_CLASS_TOPLINK, PROVIDER_MODULE_TOPLINK);
         providerClassToModuleName.put(PROVIDER_CLASS_ECLIPSELINK, PROVIDER_MODULE_ECLIPSELINK);
+        providerClassToModuleName.put(PROVIDER_CLASS_OPENJPA, PROVIDER_MODULE_OPENJPA);
+
+        providerModuleNameToAdaptorModuleName.put(PROVIDER_MODULE_HIBERNATE3, ADAPTER_MODULE_HIBERNATE3);
+        providerModuleNameToAdaptorModuleName.put(PROVIDER_MODULE_OPENJPA, ADAPTER_MODULE_OPENJPA);
     }
 
     /**
@@ -140,6 +164,16 @@ public class Configuration {
      */
     public static String getProviderModuleNameFromProviderClassName(final String providerClassName) {
         return providerClassToModuleName.get(providerClassName);
+    }
+
+    /**
+     * Get the adaptor module name for the specified provider module.
+     *
+     * @param providerModuleName
+     * @return adaptor module name or null if not known
+     */
+    public static String getAdaptorModuleNameFromProviderModuleName(final String providerModuleName) {
+        return providerModuleNameToAdaptorModuleName.get(providerModuleName);
     }
 
 }
